@@ -182,6 +182,39 @@ contract Counter {
         return p;
     }
 
+    function ecpairing(
+        uint256 g1_x,
+        uint256 g1_y,
+        uint256 g2_x1,
+        uint256 g2_x2,
+        uint256 g2_y1,
+        uint256 g2_y2
+    ) public view returns (bool result) {
+        uint256[6] memory input;
+        input[0] = g1_x;
+        input[1] = g1_y;
+        input[2] = g2_x1;
+        input[3] = g2_x2;
+        input[4] = g2_y1;
+        input[5] = g2_y2;
+
+        // Call the precompile at address 0x08 (for pairing)
+        assembly {
+            // Perform the static call to the pairing precompile
+            let success := staticcall(
+                gas(), // Forward all available gas
+                0x08, // Precompile address (ecpairing)
+                input, // Input location (G1 and G2 points)
+                0xc0, // Input size (192 bytes = 6*32 bytes)
+                input, // Output location (reuse input memory for result)
+                0x20 // Output size (32 bytes)
+            )
+
+            // Set the result to 1 (true) if successful and pairing is valid, otherwise 0 (false)
+            result := and(success, mload(input))
+        }
+    }
+
     // Convert bytes to uint256
     function bytesToUint(bytes memory b) internal pure returns (uint256) {
         uint256 n;

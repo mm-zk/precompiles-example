@@ -1,5 +1,8 @@
 # Experimenting with precompiles
 
+This repo has a bunch of example methods and scripts that test the different EC related precompiles.
+
+
 ## With the script
 
 Running against RETH/GETH/Anvil
